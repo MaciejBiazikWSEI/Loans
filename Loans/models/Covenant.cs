@@ -6,5 +6,9 @@ namespace Loans.models
 {
     class Covenant
     {
+        public Facility Facility { get; set; }
+        public decimal MaxDefaultLikelihood { get; set; }
+        public Bank Bank { get; set; }
+        public string BannedState { get; set; }
     }
 }

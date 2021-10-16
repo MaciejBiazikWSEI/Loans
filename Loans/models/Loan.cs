@@ -6,5 +6,10 @@ namespace Loans.models
 {
     class Loan
     {
+        public decimal InterestRate { get; set; }
+        public decimal Amount { get; set; }
+        public long Id { get; set; }
+        public decimal DefaultLikelyHood { get; set; }
+        public string State { get; set; }
     }
 }

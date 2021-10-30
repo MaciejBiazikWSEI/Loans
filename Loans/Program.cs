@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Loans
 {
@@ -18,10 +19,9 @@ namespace Loans
             return;
         }
 
-        static T[] readCsv<T>(string filename, Dictionary<string, Model[]> objects) where T: Model, new()
+        static T[] readCsv<T>(string filename, Dictionary<string, Model[]> objects) where T : Model, new()
         {
             var objs = new List<T>();
-
 
             // TODO: small -> large
             using (var reader = new StreamReader($"./zadanie/small/{filename}.csv"))
@@ -42,6 +42,26 @@ namespace Loans
             }
 
             return objs.ToArray();
+        }
+
+        static void printCsv(Dictionary<string, Model[]> objects)
+        {
+            var loans = objects["loans"] as Loan[];
+            var facilities = objects["facilities"] as Facility[];
+            var banks = objects["banks"] as Bank[];
+            var covenants = objects["covenants"] as Covenant[];
+
+            using (var writer = new StreamWriter($"./assignments.csv"))
+            {
+                writer.WriteLine("loan_id, facility_id");
+                foreach (Loan loan in loans)
+                {
+                    var id = loan.Id;
+
+                    // TODO: find facilities
+                    var candidates = facilities.Where((o) => o.Amount < loan.Amount * o.InterestRate);
+                }
+            }
         }
     }
 }

@@ -13,7 +13,6 @@ namespace Loans.models
 
         public void loadData(string[] fields, Dictionary<string, Model[]> objects)
         {
-
             var banks = objects["banks"] as Bank[];
 
             Amount = decimal.Parse(fields[0]);

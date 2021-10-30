@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Loans.models
 {
@@ -11,17 +11,15 @@ namespace Loans.models
         public long Id { get; private set; }
         public Bank Bank { get; private set; }
 
-        public void loadData(string[] fields, Model[][] dependencies)
+        public void loadData(string[] fields, Dictionary<string, Model[]> objects)
         {
-            if (dependencies.Length < 1 || !(dependencies[0] is Bank[]))
-                throw new ArgumentException("Facility depends on Bank");
 
-            Bank[] banks = dependencies[0] as Bank[];
+            var banks = objects["banks"] as Bank[];
 
-            Amount = decimal.Parse(fields[0].Replace('.', ','));
-            InterestRate = decimal.Parse(fields[1].Replace('.', ','));
+            Amount = decimal.Parse(fields[0]);
+            InterestRate = decimal.Parse(fields[1]);
             Id = long.Parse(fields[2]);
-            // Bank = banks.
+            Bank = banks.Where((o) => o.Id == long.Parse(fields[3])).First();
         }
     }
 }

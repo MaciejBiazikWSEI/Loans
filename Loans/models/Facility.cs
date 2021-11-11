@@ -7,6 +7,7 @@ namespace Loans.models
     class Facility: Model
     {
         public decimal Amount { get; private set; }
+        public decimal CurrentAmount { get; set; } = 0;
         public decimal InterestRate { get; private set; }
         public long Id { get; private set; }
         public Bank Bank { get; private set; }

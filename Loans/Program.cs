@@ -16,6 +16,8 @@ namespace Loans
             objects.Add("facilities", readCsv<Facility>("facilities", objects));
             objects.Add("covenants", readCsv<Covenant>("covenants", objects));
 
+            printCsv(objects);
+
             return;
         }
 
@@ -58,8 +60,26 @@ namespace Loans
                 {
                     var id = loan.Id;
 
-                    // TODO: find facilities
-                    var candidates = facilities.Where((o) => o.Amount < loan.Amount * o.InterestRate);
+                    var restrictedFacilities = covenants
+                        .Where((o) =>
+                            o.MaxDefaultLikelihood > loan.DefaultLikeliHood
+                            && o.Bank == o.Facility.Bank
+                            && o.BannedState == loan.State
+                        ).Select((o) => o.Facility);
+
+
+                    try {
+                        var facility = facilities
+                            .Where((o) => o.Amount - o.CurrentAmount > loan.Amount * o.InterestRate)
+                            .Except(restrictedFacilities)
+                            .OrderBy((o) => o.Id)
+                            .First();
+                        
+                        facility.CurrentAmount -= loan.Amount;
+                        writer.WriteLine($"{loan.Id}, {facility.Id}");
+                    } catch (InvalidOperationException) {
+                        writer.WriteLine(",");
+                    }
                 }
             }
         }

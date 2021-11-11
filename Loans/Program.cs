@@ -48,6 +48,7 @@ namespace Loans
 
         static void printCsv(Dictionary<string, Model[]> objects)
         {
+            // Deconstruct the objects dictionary for readability
             var loans = objects["loans"] as Loan[];
             var facilities = objects["facilities"] as Facility[];
             var banks = objects["banks"] as Bank[];
@@ -55,11 +56,10 @@ namespace Loans
 
             using (var writer = new StreamWriter($"./assignments.csv"))
             {
-                writer.WriteLine("loan_id, facility_id");
+                writer.WriteLine("loan_id, facility_id, total_cost");
                 foreach (Loan loan in loans)
                 {
-                    var id = loan.Id;
-
+                    // Find facilities resticted by covenants that would apply to this loan
                     var restrictedFacilities = covenants
                         .Where((o) =>
                             o.MaxDefaultLikelihood > loan.DefaultLikeliHood
@@ -67,18 +67,26 @@ namespace Loans
                             && o.BannedState == loan.State
                         ).Select((o) => o.Facility);
 
-
                     try {
+                        // Find first facility that can still support the loan and isn't restricted by above covenants
                         var facility = facilities
                             .Where((o) => o.Amount - o.CurrentAmount > loan.Amount * o.InterestRate)
                             .Except(restrictedFacilities)
                             .OrderBy((o) => o.Id)
                             .First();
                         
-                        facility.CurrentAmount -= loan.Amount;
-                        writer.WriteLine($"{loan.Id}, {facility.Id}");
+                        // Update the facility information
+                        facility.CurrentAmount += loan.Amount * facility.InterestRate;
+
+                        var totalCost = loan.Amount +
+                                        loan.Amount * loan.InterestRate +
+                                        loan.Amount * facility.InterestRate;
+
+                        // Write the facility in the file
+                        writer.WriteLine($"{loan.Id}, {facility.Id}, {totalCost}");
                     } catch (InvalidOperationException) {
-                        writer.WriteLine(",");
+                        // If no matching facilities were found, write the loan id only
+                        writer.WriteLine($"{loan.Id},,");
                     }
                 }
             }

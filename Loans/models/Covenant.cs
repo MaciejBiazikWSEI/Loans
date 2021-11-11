@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Loans.models
@@ -18,7 +19,7 @@ namespace Loans.models
 
             Facility = facilities.Where((o) => o.Id == long.Parse(fields[0])).First();
             if(fields[1].Length > 1)
-                MaxDefaultLikelihood = decimal.Parse(fields[1]);
+                MaxDefaultLikelihood = decimal.Parse(fields[1], CultureInfo.InvariantCulture);
             else
                 MaxDefaultLikelihood = null;
             Bank = banks.Where((o) => o.Id == long.Parse(fields[2])).First();

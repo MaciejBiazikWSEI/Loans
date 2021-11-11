@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Loans.models
@@ -16,8 +17,8 @@ namespace Loans.models
         {
             var banks = objects["banks"] as Bank[];
 
-            Amount = decimal.Parse(fields[0]);
-            InterestRate = decimal.Parse(fields[1]);
+            Amount = decimal.Parse(fields[0], CultureInfo.InvariantCulture);
+            InterestRate = decimal.Parse(fields[1], CultureInfo.InvariantCulture);
             Id = long.Parse(fields[2]);
             Bank = banks.Where((o) => o.Id == long.Parse(fields[3])).First();
         }

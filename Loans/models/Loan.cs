@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Loans.models
 {
@@ -13,10 +14,10 @@ namespace Loans.models
 
         public void loadData(string[] fields, Dictionary<string, Model[]> objects)
         {
-            InterestRate = decimal.Parse(fields[0]);
-            Amount = decimal.Parse(fields[1]);
+            InterestRate = decimal.Parse(fields[0], CultureInfo.InvariantCulture);
+            Amount = decimal.Parse(fields[1], CultureInfo.InvariantCulture);
             Id = long.Parse(fields[2]);
-            DefaultLikeliHood = decimal.Parse(fields[3]);
+            DefaultLikeliHood = decimal.Parse(fields[3], CultureInfo.InvariantCulture);
             State = fields[4];
         }
     }

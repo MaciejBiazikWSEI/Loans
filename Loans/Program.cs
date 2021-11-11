@@ -11,10 +11,15 @@ namespace Loans
         static void Main(string[] args)
         {
             var objects = new Dictionary<string, Model[]>();
-            objects.Add("banks", readCsv<Bank>("banks", objects));
-            objects.Add("loans", readCsv<Loan>("loans", objects));
-            objects.Add("facilities", readCsv<Facility>("facilities", objects));
-            objects.Add("covenants", readCsv<Covenant>("covenants", objects));
+            try {
+                objects.Add("banks", readCsv<Bank>("banks", objects));
+                objects.Add("loans", readCsv<Loan>("loans", objects));
+                objects.Add("facilities", readCsv<Facility>("facilities", objects));
+                objects.Add("covenants", readCsv<Covenant>("covenants", objects));
+            } catch (FileNotFoundException e) {
+                Console.Error.WriteLine($"File {e.FileName} not found.");
+                return;
+            }
 
             printCsv(objects);
 
@@ -25,8 +30,7 @@ namespace Loans
         {
             var objs = new List<T>();
 
-            // TODO: small -> large
-            using (var reader = new StreamReader($"./zadanie/small/{filename}.csv"))
+            using (var reader = new StreamReader($"./{filename}.csv"))
             {
                 // skip first line
                 reader.ReadLine();
@@ -72,7 +76,6 @@ namespace Loans
                         var facility = facilities
                             .Where((o) => o.Amount - o.CurrentAmount > loan.Amount * o.InterestRate)
                             .Except(restrictedFacilities)
-                            .OrderBy((o) => o.Id)
                             .First();
                         
                         // Update the facility information
